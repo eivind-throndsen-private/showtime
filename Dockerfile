@@ -1,6 +1,13 @@
 # Use Alpine-based Python image with a specific version for better reproducibility
 FROM python:3.9.17-alpine3.18
 
+# Set timezone
+ENV TZ=Europe/Amsterdam
+RUN apk add --no-cache tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    apk del tzdata
+
 # Set working directory
 WORKDIR /app
 
