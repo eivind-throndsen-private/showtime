@@ -2,4 +2,5 @@ Dockerfile.bak
 generate-swiss-clock-good.py
 *.tar
 *.*~
-
+output/bak/*
+output/.DS_Store
