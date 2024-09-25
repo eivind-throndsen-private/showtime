@@ -175,24 +175,6 @@ def create_swiss_clock_image(width=480):
     # Downscale the image to desired size using a high-quality resampling filter
     image = image.resize((width, int(width / aspect_ratio)), Image.LANCZOS)
 
-    # Add subtle 3D effect to simulate a spotlight from above and right
-    image = image.convert('RGBA')  # Ensure image has alpha channel
-    spotlight = Image.new('RGBA', image.size, (0, 0, 0, 0))
-    spotlight_draw = ImageDraw.Draw(spotlight)
-    ellipse_bbox = (
-        int(image.width * 0.3),  # left
-        int(image.height * -0.2), # top (negative to go beyond the image)
-        int(image.width * 1.2),  # right
-        int(image.height * 0.7)   # bottom
-    )
-    spotlight_draw.ellipse(ellipse_bbox, fill=(255, 255, 255, 128))
-
-    # Apply Gaussian blur to the spotlight to make it soft
-    spotlight = spotlight.filter(ImageFilter.GaussianBlur(radius=int(image.width / 10)))
-
-    # Composite the spotlight onto the image
-    image = Image.alpha_composite(image, spotlight)
-
     # Ensure the output directory exists
     output_dir = "./output"
     if not os.path.exists(output_dir):
