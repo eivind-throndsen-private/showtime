@@ -1,6 +1,22 @@
 from PIL import Image, ImageDraw, ImageFont
 import datetime
 import os
+import argparse
+
+# =======================
+# Configuration Parameters
+# =======================
+
+# Day Mode Colors
+DAY_BACKGROUND_COLOR = (135, 206, 235)  # Sky blue
+DAY_TEXT_COLOR = (0, 0, 0)  # Black
+
+# Night Mode Colors
+NIGHT_BACKGROUND_COLOR = (0, 0, 0)  # Black
+NIGHT_TEXT_COLOR = (211, 211, 211)  # Light gray
+
+# Default Mode
+DEFAULT_MODE = 'day'
 
 def get_current_datetime():
     now = datetime.datetime.now()
@@ -33,13 +49,19 @@ def save_image(img, output_path):
     img.save(output_path)
     print(f"Saved date / time to '{output_path}'.")
 
-def generate_date_time_image(font_path, output_dir):
+def generate_date_time_image(font_path, output_dir, mode='day'):
     # Image settings
     final_img_width, final_img_height = 480, 272
     img_width, img_height = final_img_width * 2, final_img_height * 2  # 4x larger
-    background_color = (135, 206, 235)  # Sky blue
     font_size = 96  # Doubled from 48
-    text_color = (0, 0, 0)  # Black
+
+    # Select colors based on mode
+    if mode == 'night':
+        background_color = NIGHT_BACKGROUND_COLOR
+        text_color = NIGHT_TEXT_COLOR
+    else:
+        background_color = DAY_BACKGROUND_COLOR
+        text_color = DAY_TEXT_COLOR
 
     # Get current date and time
     date_text, time_text = get_current_datetime()
@@ -66,9 +88,27 @@ def generate_date_time_image(font_path, output_dir):
     save_image(img_resized, output_path)
 
 def main():
+    parser = argparse.ArgumentParser(description="Generate date and time image with day and night modes.")
+    parser.add_argument('--night-mode', action='store_true', help='Force night mode regardless of the current time.')
+    args = parser.parse_args()
+
+    # Determine if night mode should be activated
+    now = datetime.datetime.now()
+    current_hour = now.hour
+
+    # Night mode hours: 23 (11 PM) to 7 (7 AM)
+    is_night_time = current_hour >= 23 or current_hour < 7
+
+    # Activate night mode if either it's night time or the user has forced it via the flag
+    if args.night_mode or is_night_time:
+        active_mode = 'night'
+    else:
+        active_mode = 'day'
+
     font_path = "./Arima-VariableFont_wght.ttf"  # Ensure this is a thin/light font
     output_dir = "./output"
-    generate_date_time_image(font_path, output_dir)
+    generate_date_time_image(font_path, output_dir, mode=active_mode)
 
 if __name__ == "__main__":
     main()
+
