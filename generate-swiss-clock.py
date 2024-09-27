@@ -21,8 +21,8 @@ DAY_CENTER_CIRCLE_COLOR = '#C23132'       # Red circle at center
 
 # Night Mode Colors
 NIGHT_BACKGROUND_COLOR = (0, 0, 0)         # Black
-NIGHT_OUTER_RING_FILL = (66, 66, 66)    # Subtle dark gray
-NIGHT_OUTER_RING_OUTLINE = (66, 66, 66)    # Subtle dark gray
+NIGHT_OUTER_RING_FILL = (0, 0, 0)    # Subtle dark gray
+NIGHT_OUTER_RING_OUTLINE = (0, 0, 0)    # Subtle dark gray
 NIGHT_INNER_CLOCK_FACE_FILL = (0, 0, 0)    # Black
 NIGHT_INNER_CLOCK_FACE_OUTLINE = (66, 66, 66)  # Subtle dark gray
 NIGHT_HOUR_HAND_COLOR = (66, 66, 66)       # Subtle dark gray
@@ -110,8 +110,11 @@ def create_swiss_clock_image(width=480, mode='day'):
     height_draw = int(width_draw / aspect_ratio)
     center_x = width_draw // 2
     center_y = height_draw // 2
-    clock_radius = int(min(width_draw, height_draw) * 0.40)
-
+    if mode == 'night':
+        clock_radius = int(min(width_draw, height_draw) * 0.48)
+    else:
+        clock_radius = int(min(width_draw, height_draw) * 0.41)
+        
     # Define the unit scale (units to pixels)
     # According to measurements, outer edge of tickmarks at 49.5 units
     unit_scale = clock_radius / 49.5
@@ -257,8 +260,9 @@ if __name__ == "__main__":
     current_hour = now.hour
 
     # Night mode hours: 23 (11 PM) to 7 (7 AM)
-    is_night_time = current_hour >= 23 or current_hour < 7
-
+    # is_night_time = current_hour >= 23 or current_hour < 7
+    is_night_time = False
+    
     # Activate night mode if either it's night time or the user has forced it via the flag
     if args.night_mode or is_night_time:
         active_mode = 'night'
