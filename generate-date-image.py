@@ -13,7 +13,7 @@ DAY_TEXT_COLOR = (0, 0, 0)  # Black
 
 # Night Mode Colors
 NIGHT_BACKGROUND_COLOR = (0, 0, 0)  # Black
-NIGHT_TEXT_COLOR = (211, 211, 211)  # Light gray
+NIGHT_TEXT_COLOR = (0, 128, 255)  # Azure
 
 # Default Mode
 DEFAULT_MODE = 'day'
@@ -28,7 +28,11 @@ def create_background_image(width, height, color):
     return Image.new("RGB", (width, height), color=color)
 
 def get_font(font_path, font_size):
-    return ImageFont.truetype(font_path, font_size)
+    try:
+        return ImageFont.truetype(font_path, font_size)
+    except Exception as e:
+        print(f"Error loading font '{font_path}': {e}")
+        return ImageFont.load_default()
 
 def calculate_text_position(draw, text, font, img_width, img_height, y_offset):
     text_bbox = draw.textbbox((0, 0), text, font=font)
@@ -63,6 +67,12 @@ def generate_date_time_image(font_path, output_dir, mode='day'):
         background_color = DAY_BACKGROUND_COLOR
         text_color = DAY_TEXT_COLOR
 
+     # **Debug Print**
+    print(f"Mode: {mode}")
+    print(f"Background Color: {background_color}")
+    print(f"Text Color: {text_color}")
+    
+        
     # Get current date and time
     date_text, time_text = get_current_datetime()
 

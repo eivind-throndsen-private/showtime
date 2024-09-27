@@ -260,8 +260,7 @@ if __name__ == "__main__":
     current_hour = now.hour
 
     # Night mode hours: 23 (11 PM) to 7 (7 AM)
-    # is_night_time = current_hour >= 23 or current_hour < 7
-    is_night_time = False
+    is_night_time = current_hour >= 23 or current_hour < 7
     
     # Activate night mode if either it's night time or the user has forced it via the flag
     if args.night_mode or is_night_time:
