@@ -16,12 +16,13 @@ run:
 	docker run --name $(CONTAINER_NAME) -v $(PWD)/output:/app/output $(IMAGE_NAME):$(TAG)
 
 # Remove the container
-clean:
-	docker rm -f $(CONTAINER_NAME) || true
+clean: clean-image
+	-docker rm -f $(CONTAINER_NAME) || true
+
 
 # Remove the image
 clean-image:
-	docker rmi $(IMAGE_NAME) || true
+	-docker rmi $(IMAGE_NAME) || true
 
 # Save the Docker image to a tar file
 save:
