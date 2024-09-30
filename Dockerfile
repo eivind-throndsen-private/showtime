@@ -1,5 +1,5 @@
 # Use Alpine-based Python image with a specific version for better reproducibility
-FROM python:3.9.17-alpine3.18
+FROM python:3.9-alpine3.19
 
 # Set timezone
 ENV TZ=Europe/Amsterdam
@@ -13,7 +13,7 @@ WORKDIR /app
 
 # Install system dependencies and Python packages
 # Combine operations to reduce layers and overall image size
-RUN apk add --no-cache bash bc jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev harfbuzz-dev fribidi-dev && \
+RUN apk add --no-cache bash bc coreutils jpeg-dev zlib-dev freetype-dev lcms2-dev openjpeg-dev tiff-dev tk-dev tcl-dev harfbuzz-dev fribidi-dev && \
     apk add --no-cache --virtual .build-deps build-base && \
     pip install --no-cache-dir Pillow==9.5.0 && \
     apk del .build-deps && \

@@ -68,9 +68,9 @@ def generate_date_time_image(font_path, output_dir, mode='day'):
         text_color = DAY_TEXT_COLOR
 
      # **Debug Print**
-    print(f"Mode: {mode}")
-    print(f"Background Color: {background_color}")
-    print(f"Text Color: {text_color}")
+    # print(f"Mode: {mode}")
+    # print(f"Background Color: {background_color}")
+    # print(f"Text Color: {text_color}")
     
         
     # Get current date and time
@@ -114,7 +114,7 @@ def main():
         active_mode = 'night'
     else:
         active_mode = 'day'
-
+        
     font_path = "./Arima-VariableFont_wght.ttf"  # Ensure this is a thin/light font
     output_dir = "./output"
     generate_date_time_image(font_path, output_dir, mode=active_mode)
