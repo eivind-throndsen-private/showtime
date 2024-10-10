@@ -10,10 +10,10 @@ import argparse
 
 # Day Mode Colors
 DAY_BACKGROUND_COLOR = (230, 240, 250)      # Very light, subtle pale sky blue
-DAY_OUTER_RING_FILL = "lightgray"
+DAY_OUTER_RING_FILL = "white"
 DAY_OUTER_RING_OUTLINE = "darkgray"
 DAY_INNER_CLOCK_FACE_FILL = "white"
-DAY_INNER_CLOCK_FACE_OUTLINE = "gray"
+DAY_INNER_CLOCK_FACE_OUTLINE = "white"
 DAY_HOUR_HAND_COLOR = "black"
 DAY_MINUTE_HAND_COLOR = "black"
 DAY_TICK_MARK_COLOR = "black"
@@ -113,7 +113,7 @@ def create_swiss_clock_image(width=480, mode='day'):
     if mode == 'night':
         clock_radius = int(min(width_draw, height_draw) * 0.48)
     else:
-        clock_radius = int(min(width_draw, height_draw) * 0.41)
+        clock_radius = int(min(width_draw, height_draw) * 0.43)
         
     # Define the unit scale (units to pixels)
     # According to measurements, outer edge of tickmarks at 49.5 units
@@ -148,7 +148,7 @@ def create_swiss_clock_image(width=480, mode='day'):
     draw = ImageDraw.Draw(image)
 
     # Draw steel frame ring (outer circle)
-    outer_radius = clock_radius + 75
+    outer_radius = clock_radius + 40
     bounding_box = [
         center_x - outer_radius,
         center_y - outer_radius,
@@ -158,7 +158,7 @@ def create_swiss_clock_image(width=480, mode='day'):
     draw.ellipse(bounding_box, fill=OUTER_RING_FILL, outline=OUTER_RING_OUTLINE, width=4 * scale_factor)
 
     # Draw inner clock face
-    inner_radius = int(clock_radius * 0.95) + 50
+    inner_radius = int(clock_radius) + 40
     bounding_box = [
         center_x - inner_radius,
         center_y - inner_radius,
@@ -170,7 +170,7 @@ def create_swiss_clock_image(width=480, mode='day'):
     # Draw hour markers as rectangles
     for hour in range(12):
         angle_degrees = (hour / 12.0) * 360.0 - 90
-        outer_radius_marker = unit_scale * 49.5 * 0.95  # Adjusted outer radius for markers
+        outer_radius_marker = unit_scale * 49.5  # Adjusted outer radius for markers
         inner_radius_marker = outer_radius_marker - unit_scale * 11  # Hour markers are 11 units long
         marker_width = unit_scale * 3  # Hour marker width is 3 units
         draw_marker(draw, angle_degrees, outer_radius_marker, inner_radius_marker, marker_width, center_x, center_y, TICK_MARK_COLOR)
@@ -180,7 +180,7 @@ def create_swiss_clock_image(width=480, mode='day'):
         if minute % 5 == 0:
             continue  # Skip the hour markers
         angle_degrees = (minute / 60.0) * 360.0 - 90
-        outer_radius_marker = unit_scale * 49.5 * 0.95
+        outer_radius_marker = unit_scale * 49.5 
         inner_radius_marker = outer_radius_marker - unit_scale * 3.2  # Minute markers are 3.2 units long
         marker_width = unit_scale * 1.2  # Minute marker width is 1.2 units
         draw_marker(draw, angle_degrees, outer_radius_marker, inner_radius_marker, marker_width, center_x, center_y, TICK_MARK_COLOR)
@@ -208,8 +208,8 @@ def create_swiss_clock_image(width=480, mode='day'):
     draw.polygon(hour_hand_coords, fill=HOUR_HAND_COLOR)
 
     # Draw minute hand as a polygon
-    # Using measurements for minute hand: 46 units in the direction of the minute, 12 units in the opposite
-    minute_hand_length = unit_scale * 46
+    # Using measurements for minute hand: 48 units in the direction of the minute, 12 units in the opposite
+    minute_hand_length = unit_scale * 48
     minute_hand_stickout = unit_scale * 12
     base_width = unit_scale * 5.7
     tip_width = unit_scale * 3.5
