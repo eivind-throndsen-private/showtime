@@ -20,15 +20,17 @@ DAY_TICK_MARK_COLOR = "black"
 DAY_CENTER_CIRCLE_COLOR = '#C23132'       # Red circle at center
 
 # Night Mode Colors
+NIGHT_MODE_POSITIVE = (117, 117, 117) # Subtle dark gray
+
 NIGHT_BACKGROUND_COLOR = (0, 0, 0)         # Black
 NIGHT_OUTER_RING_FILL = (0, 0, 0)    # Subtle dark gray
 NIGHT_OUTER_RING_OUTLINE = (0, 0, 0)    # Subtle dark gray
 NIGHT_INNER_CLOCK_FACE_FILL = (0, 0, 0)    # Black
-NIGHT_INNER_CLOCK_FACE_OUTLINE = (66, 66, 66)  # Subtle dark gray
-NIGHT_HOUR_HAND_COLOR = (66, 66, 66)       # Subtle dark gray
-NIGHT_MINUTE_HAND_COLOR = (66, 66, 66)     # Subtle dark gray
-NIGHT_TICK_MARK_COLOR = (66, 66, 66)       # Subtle dark gray
-NIGHT_CENTER_CIRCLE_COLOR = (66, 66, 66)   # Subtle dark gray
+NIGHT_INNER_CLOCK_FACE_OUTLINE = NIGHT_MODE_POSITIVE
+NIGHT_HOUR_HAND_COLOR = NIGHT_MODE_POSITIVE
+NIGHT_MINUTE_HAND_COLOR = NIGHT_MODE_POSITIVE
+NIGHT_TICK_MARK_COLOR = NIGHT_MODE_POSITIVE
+NIGHT_CENTER_CIRCLE_COLOR = NIGHT_MODE_POSITIVE
 
 # Default Mode (True for Night Mode, False for Day Mode)
 DEFAULT_MODE = 'day'
