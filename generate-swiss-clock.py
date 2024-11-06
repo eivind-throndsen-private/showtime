@@ -3,7 +3,7 @@ import datetime
 import os
 import math
 import argparse
-import subprocess
+import imagequant
 
 # =======================
 # Configuration Parameters
@@ -46,7 +46,7 @@ ASPECT_RATIO_HEIGHT = 9
 
 def optimize_png(input_file, output_file, quality=(50, 80), colors=8):
     """
-    Optimizes a PNG image using pngquant.
+    Optimizes a PNG image using imagequant library.
     
     Parameters:
     - input_file (str): Path to the input PNG file.
@@ -58,25 +58,24 @@ def optimize_png(input_file, output_file, quality=(50, 80), colors=8):
     - bool: True if optimization was successful, False otherwise.
     """
     try:
-        # Construct the pngquant command
-        cmd = [
-            "pngquant",
-            "--quality={}-{}".format(*quality),  # Set quality range
-            "--speed", "1",                      # Slowest compression for max quality
-            "--force",                           # Overwrite output file if it exists
-            "--output", output_file,             # Output file
-            str(colors),                         # Number of colors as positional argument
-            "--",                                # Indicates the end of options
-            input_file                           # Input file
-        ]
-                
-        # Run the command
-        result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        # Open input image
+        input_image = Image.open(input_file)
         
-        # print("Optimization successful:", result.stdout.decode())
+        # Quantize the image
+        output_image = imagequant.quantize_pil_image(
+            input_image,
+            dithering_level=1.0,     # Maximum dithering for best quality
+            max_colors=colors,        # Number of colors to reduce to
+            min_quality=quality[0],   # Minimum quality from tuple
+            max_quality=quality[1]    # Maximum quality from tuple
+        )
+        
+        # Save the optimized image
+        output_image.save(output_file, format="PNG", optimize=True)
         return True
-    except subprocess.CalledProcessError as e:
-        print("Error during optimization:", e.stderr.decode())
+        
+    except Exception as e:
+        print("Error during optimization:", str(e))
         return False
 
 
