@@ -1,7 +1,11 @@
+# This script generates a file containing current date and time, suitable for displaying on a small embedded device  
+# Initially written for display on Squeezebox Touch 
+
 from PIL import Image, ImageDraw, ImageFont
 import datetime
 import os
 import argparse
+import subprocess 
 
 # =======================
 # Configuration Parameters
@@ -17,6 +21,42 @@ NIGHT_TEXT_COLOR = (0, 128, 255)  # Azure
 
 # Default Mode
 DEFAULT_MODE = 'day'
+
+def optimize_png(input_file, output_file, quality=(50, 80), colors=8):
+    """
+    Optimizes a PNG image using pngquant.
+    
+    Parameters:
+    - input_file (str): Path to the input PNG file.
+    - output_file (str): Path to the output PNG file.
+    - quality (tuple): Tuple defining the min and max quality (1-100).
+    - colors (int): Number of colors to reduce to (1-256).
+    
+    Returns:
+    - bool: True if optimization was successful, False otherwise.
+    """
+    try:
+        # Construct the pngquant command
+        cmd = [
+            "pngquant",
+            "--quality={}-{}".format(*quality),  # Set quality range
+            "--speed", "1",                      # Slowest compression for max quality
+            "--force",                           # Overwrite output file if it exists
+            "--output", output_file,             # Output file
+            str(colors),                         # Number of colors as positional argument
+            "--",                                # Indicates the end of options
+            input_file                           # Input file
+        ]
+        
+        # Run the command
+        result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        print("Optimization successful:", result.stdout.decode())
+        return True
+    except subprocess.CalledProcessError as e:
+        print("Error during optimization:", e.stderr.decode())
+        return False
+
 
 def get_current_datetime():
     now = datetime.datetime.now()
@@ -94,8 +134,15 @@ def generate_date_time_image(font_path, output_dir, mode='day'):
 
     # Ensure output directory exists and save image
     ensure_output_directory(output_dir)
+    output_path_tmp = os.path.join(output_dir, "date_time_initial.png")
     output_path = os.path.join(output_dir, "date_time.png")
-    save_image(img_resized, output_path)
+ 
+    save_image(img_resized, output_path_tmp)
+
+    # cut down on colors and size
+    optimize_png(output_path_tmp, output_path, quality=(50, 80), colors=8)
+
+
 
 def main():
     parser = argparse.ArgumentParser(description="Generate date and time image with day and night modes.")

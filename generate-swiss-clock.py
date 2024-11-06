@@ -3,6 +3,7 @@ import datetime
 import os
 import math
 import argparse
+import subprocess
 
 # =======================
 # Configuration Parameters
@@ -42,6 +43,42 @@ ASPECT_RATIO_HEIGHT = 9
 # =======================
 # Helper Functions
 # =======================
+
+def optimize_png(input_file, output_file, quality=(50, 80), colors=8):
+    """
+    Optimizes a PNG image using pngquant.
+    
+    Parameters:
+    - input_file (str): Path to the input PNG file.
+    - output_file (str): Path to the output PNG file.
+    - quality (tuple): Tuple defining the min and max quality (1-100).
+    - colors (int): Number of colors to reduce to (1-256).
+    
+    Returns:
+    - bool: True if optimization was successful, False otherwise.
+    """
+    try:
+        # Construct the pngquant command
+        cmd = [
+            "pngquant",
+            "--quality={}-{}".format(*quality),  # Set quality range
+            "--speed", "1",                      # Slowest compression for max quality
+            "--force",                           # Overwrite output file if it exists
+            "--output", output_file,             # Output file
+            str(colors),                         # Number of colors as positional argument
+            "--",                                # Indicates the end of options
+            input_file                           # Input file
+        ]
+                
+        # Run the command
+        result = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        
+        # print("Optimization successful:", result.stdout.decode())
+        return True
+    except subprocess.CalledProcessError as e:
+        print("Error during optimization:", e.stderr.decode())
+        return False
+
 
 def polar_to_cartesian(center_x, center_y, radius, angle_degrees):
     angle_radians = math.radians(angle_degrees)
@@ -199,12 +236,12 @@ def create_swiss_clock_image(width=480, mode='day'):
     # Draw hour hand as a polygon
     # Using measurements for hour hand: 32 units in the direction of the hour, 12 units in the opposite
     hour_hand_length = unit_scale * 32
-    hour_hand_stickout = unit_scale * 12
+    hour_hand_tail = unit_scale * 12
     base_width = unit_scale * 6  # From original hand parameters
     tip_width = unit_scale * 4.5
 
     hour_hand_coords = get_hand_coordinates(
-        center_x, center_y, hour_hand_length, hour_angle, base_width, tip_width, hour_hand_stickout, HOUR_HAND_COLOR
+        center_x, center_y, hour_hand_length, hour_angle, base_width, tip_width, hour_hand_tail, HOUR_HAND_COLOR
     )
 
     draw.polygon(hour_hand_coords, fill=HOUR_HAND_COLOR)
@@ -212,12 +249,12 @@ def create_swiss_clock_image(width=480, mode='day'):
     # Draw minute hand as a polygon
     # Using measurements for minute hand: 48 units in the direction of the minute, 12 units in the opposite
     minute_hand_length = unit_scale * 48
-    minute_hand_stickout = unit_scale * 12
+    minute_hand_tail = unit_scale * 12
     base_width = unit_scale * 5.7
     tip_width = unit_scale * 3.5
 
     minute_hand_coords = get_hand_coordinates(
-        center_x, center_y, minute_hand_length, minute_angle, base_width, tip_width, minute_hand_stickout, MINUTE_HAND_COLOR
+        center_x, center_y, minute_hand_length, minute_angle, base_width, tip_width, minute_hand_tail, MINUTE_HAND_COLOR
     )
 
     draw.polygon(minute_hand_coords, fill=MINUTE_HAND_COLOR)
@@ -242,11 +279,17 @@ def create_swiss_clock_image(width=480, mode='day'):
 
     # Save the image
     mode_suffix = "_night" if mode == 'night' else "_day"
+    tmp_output_path = os.path.join(output_dir, f"swiss-clock-orig.png")
     output_path = os.path.join(output_dir, f"swiss-clock.png")
+
     image = image.convert('RGB')  # Convert back to RGB if not saving with transparency
-    image.save(output_path)
+    image.save(tmp_output_path)
+
+    # cut down on colors and size
+    optimize_png(tmp_output_path, output_path, quality=(50, 80), colors=8)
 
     print(f"Saved clock image to '{output_path}'.")
+
 
 # =======================
 # Main Execution
